@@ -146,12 +146,12 @@ courseTableBody.addEventListener("click", async function (event) {
     const courseId = courses[index]._id;
 
     try {
-      await fetch(`https://web-2-ftdn.onrender.com/courses/${courseId}`,{
-  method: "DELETE",
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-}
+      await fetch(`https://web-2-ftdn.onrender.com/courses/${courseId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       courses.splice(index, 1);
 
