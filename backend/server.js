@@ -28,6 +28,28 @@ async function connectDB() {
 
 connectDB();
 
+function auth(req, res, next) {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        message: "No token",
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.userId = decoded.userId;
+
+    next();
+  } catch (error) {
+    res.status(401).json({
+      message: "Invalid token",
+    });
+  }
+}
+
 // TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Study Planner Backend Running");
@@ -102,14 +124,20 @@ app.put("/courses/:id", async (req, res) => {
 });
 
 // STUDY SCHEDULE
-app.post("/studySchedule", async (req, res) => {
-  const schedule = req.body;
+app.post("/studySchedule", auth, async (req, res) => {
+  const schedule = {
+    ...req.body,
+    userId: req.userId,
+  };
   const result = await db.collection("studySchedule").insertOne(schedule);
   res.json(result);
 });
 
-app.get("/studySchedule", async (req, res) => {
-  const schedule = await db.collection("studySchedule").find().toArray();
+app.get("/studySchedule", auth, async (req, res) => {
+  const schedule = await db
+    .collection("studySchedule")
+    .find({ userId: req.userId })
+    .toArray();
   res.json(schedule);
 });
 

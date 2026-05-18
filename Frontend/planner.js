@@ -39,7 +39,16 @@ const timeSlots = [
 let sessions = [];
 async function loadSessions() {
   try {
-    const response = await fetch("https://web-v942.onrender.com/studySchedule");
+    const response = await fetch(
+      "https://web-v942.onrender.com/studySchedule",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      },
+    );
+
     sessions = await response.json();
 
     console.log("Loaded sessions:", sessions);
@@ -55,13 +64,16 @@ loadSessions();
 async function updateSessionStatus(sessionId, status) {
   try {
     const response = await fetch(
-      `https://web-v942.onrender.com/studySchedule/${sessionId}/status`,
+      "https://web-v942.onrender.com/studySchedule",
       {
-        method: "PUT",
+        method: "POST",
+
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ status }),
+
+        body: JSON.stringify(sessionData),
       },
     );
 
@@ -180,13 +192,15 @@ sessionForm.onsubmit = async function (e) {
       "https://web-v942.onrender.com/studySchedule",
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+
         body: JSON.stringify(sessionData),
       },
     );
-
     const result = await response.json();
 
     console.log("Add session result:", result);
@@ -237,8 +251,19 @@ deleteBtn.onclick = async function () {
 
     alert("Session deleted successfully");
   } catch (error) {
-    console.log(error);
-    alert("Error deleting session");
+    const response = await fetch(
+      `https://web-v942.onrender.com/studySchedule/${sessionId}`,
+      {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+
+        body: JSON.stringify({ status }),
+      },
+    );
   }
 };
 // تحويل الوقت من 12 ساعة إلى 24 ساعة للمقارنة الصحيحة
