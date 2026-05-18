@@ -40,7 +40,7 @@ let sessions = [];
 async function loadSessions() {
   try {
     const response = await fetch(
-      "https://web-v942.onrender.com/studySchedule",
+      "https://web-1-vou2.onrender.com/studySchedule",
       {
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ loadSessions();
 async function updateSessionStatus(sessionId, status) {
   try {
     const response = await fetch(
-      `https://web-v942.onrender.com/studySchedule/${sessionId}`,
+      `https://web-1-vou2.onrender.com/studySchedule/${sessionId}`,
       {
         method: "PUT",
 
@@ -189,7 +189,7 @@ sessionForm.onsubmit = async function (e) {
     );
   } else {
     const response = await fetch(
-      "https://web-v942.onrender.com/studySchedule",
+      "https://web-1-vou2.onrender.com/studySchedule",
       {
         method: "POST",
 
@@ -240,7 +240,7 @@ deleteBtn.onclick = async function () {
   const id = document.getElementById("sessionId").value;
 
   try {
-    await fetch(`https://web-v942.onrender.com/studySchedule/${id}`, {
+    await fetch(`https://web-1-vou2.onrender.com/studySchedule/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

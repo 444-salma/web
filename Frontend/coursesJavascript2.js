@@ -10,7 +10,7 @@ const courseTableBody = document.querySelector("tbody");
 
 async function loadCourses() {
   try {
-    const response = await fetch("https://web-v942.onrender.com/courses");
+    const response = await fetch("https://web-1-vou2.onrender.com/courses");
 
     courses = await response.json();
 
@@ -41,7 +41,7 @@ form.addEventListener("submit", async function (event) {
 
     if (editingCourseId) {
       response = await fetch(
-        `https://web-v942.onrender.com/courses/${editingCourseId}`,
+        `https://web-1-vou2.onrender.com/courses/${editingCourseId}`,
         {
           method: "PUT",
           headers: {
@@ -63,7 +63,7 @@ form.addEventListener("submit", async function (event) {
 
       alert("Course updated successfully!");
     } else {
-      response = await fetch("https://web-v942.onrender.com/courses", {
+      response = await fetch("https://web-1-vou2.onrender.com/courses", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +140,7 @@ courseTableBody.addEventListener("click", async function (event) {
     const courseId = courses[index]._id;
 
     try {
-      await fetch(`https://web-v942.onrender.com/courses/${courseId}`, {
+      await fetch(`https://web-1-vou2.onrender.com/courses/${courseId}`, {
         method: "DELETE",
       });
 
