@@ -199,10 +199,22 @@ app.post("/register", async (req, res) => {
       password: hashedPassword,
     };
 
-    await db.collection("users").insertOne(newUser);
+    const result = await db.collection("users").insertOne(newUser);
+
+    const token = jwt.sign(
+      {
+        userId: result.insertedId,
+        email: email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
 
     res.json({
       message: "User registered successfully",
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -234,10 +246,13 @@ app.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       {
-        id: user._id,
+        userId: user._id,
         email: user.email,
       },
       process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
     );
 
     res.json({

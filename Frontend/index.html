@@ -84,10 +84,7 @@
           if (response.ok) {
             // save token
             localStorage.setItem("token", data.token);
-
-            alert(data.message);
-
-            window.location.href = "dashboard.html";
+            window.location.href = "planner.html";
           } else {
             alert(data.message);
           }
