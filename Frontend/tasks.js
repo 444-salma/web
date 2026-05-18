@@ -10,7 +10,7 @@ async function loadCoursesIntoSelect() {
   courseSelect.innerHTML = "";
 
   try {
-    const response = await fetch("https://web-1-vou2.onrender.com/courses");
+    const response = await fetch("https://web-2-ftdn.onrender.com/courses");
     const courses = await response.json();
 
     if (courses.length === 0) {
@@ -57,7 +57,7 @@ form.addEventListener("submit", async function (e) {
   };
 
   try {
-    const response = await fetch("https://web-1-vou2.onrender.com/tasks", {
+    const response = await fetch("https://web-2-ftdn.onrender.com/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +115,7 @@ function displayTasks() {
 
 async function loadTasks() {
   try {
-    const response = await fetch("https://web-1-vou2.onrender.com/tasks");
+    const response = await fetch("https://web-2-ftdn.onrender.com/tasks");
     tasks = await response.json();
     displayTasks();
   } catch (error) {

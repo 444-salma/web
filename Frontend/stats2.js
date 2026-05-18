@@ -2,9 +2,9 @@ let allSessions = [];
 
 async function loadStatistics() {
   const [coursesRes, tasksRes, sessionsRes] = await Promise.all([
-    fetch("https://web-1-vou2.onrender.com/courses"),
-    fetch("https://web-1-vou2.onrender.com/tasks"),
-    fetch("https://web-1-vou2.onrender.com/studySchedule"),
+    fetch("https://web-2-ftdn.onrender.com/courses"),
+    fetch("https://web-2-ftdn.onrender.com/tasks"),
+    fetch("https://web-2-ftdn.onrender.com/studySchedule"),
   ]);
 
   const courses = await coursesRes.json();
@@ -93,7 +93,7 @@ async function markSession(sessionId, status) {
     console.log("status:", status);
 
     const response = await fetch(
-      `https://web-1-vou2.onrender.com/studySchedule/${sessionId}/status`,
+      `https://web-2-ftdn.onrender.com/studySchedule/${sessionId}/status`,
       {
         method: "PUT",
         headers: {

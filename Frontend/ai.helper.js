@@ -10,7 +10,7 @@ async function generateResponse() {
   responseBox.textContent = "Thinking...";
 
   try {
-    const response = await fetch("https://web-1-vou2.onrender.com/ai-helper", {
+    const response = await fetch("https://web-2-ftdn.onrender.com/ai-helper", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
