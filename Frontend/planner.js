@@ -64,16 +64,16 @@ loadSessions();
 async function updateSessionStatus(sessionId, status) {
   try {
     const response = await fetch(
-      "https://web-v942.onrender.com/studySchedule",
+      `https://web-v942.onrender.com/studySchedule/${sessionId}`,
       {
-        method: "POST",
+        method: "PUT",
 
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
 
-        body: JSON.stringify(sessionData),
+        body: JSON.stringify({ status }),
       },
     );
 
@@ -242,28 +242,20 @@ deleteBtn.onclick = async function () {
   try {
     await fetch(`https://web-v942.onrender.com/studySchedule/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
 
     sessions = sessions.filter((s) => s._id !== id);
 
     modal.style.display = "none";
-    displayTable();
+    await loadSessions();
 
     alert("Session deleted successfully");
   } catch (error) {
-    const response = await fetch(
-      `https://web-v942.onrender.com/studySchedule/${sessionId}`,
-      {
-        method: "PUT",
-
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-
-        body: JSON.stringify({ status }),
-      },
-    );
+    console.log(error);
+    alert("Error deleting session");
   }
 };
 // تحويل الوقت من 12 ساعة إلى 24 ساعة للمقارنة الصحيحة
