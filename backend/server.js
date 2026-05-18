@@ -59,38 +59,56 @@ app.get("/users", async (req, res) => {
   const users = await db.collection("users").find().toArray();
   res.json(users);
 });
-
 // COURSES
-app.post("/courses", async (req, res) => {
-  const course = req.body;
+app.post("/courses", auth, async (req, res) => {
+  const course = {
+    ...req.body,
+    userId: req.userId,
+  };
+
   const result = await db.collection("courses").insertOne(course);
+
   res.json(result);
 });
 
-app.get("/courses", async (req, res) => {
-  const courses = await db.collection("courses").find().toArray();
+app.get("/courses", auth, async (req, res) => {
+  const courses = await db
+    .collection("courses")
+    .find({ userId: req.userId })
+    .toArray();
+
   res.json(courses);
 });
 
 // TASKS
-app.post("/tasks", async (req, res) => {
-  const task = req.body;
+app.post("/tasks", auth, async (req, res) => {
+  const task = {
+    ...req.body,
+    userId: req.userId,
+  };
+
   const result = await db.collection("tasks").insertOne(task);
+
   res.json(result);
 });
 
-app.get("/tasks", async (req, res) => {
-  const tasks = await db.collection("tasks").find().toArray();
+app.get("/tasks", auth, async (req, res) => {
+  const tasks = await db
+    .collection("tasks")
+    .find({ userId: req.userId })
+    .toArray();
+
   res.json(tasks);
 });
 
 // DELETE COURSE
-app.delete("/courses/:id", async (req, res) => {
+app.delete("/courses/:id", auth, async (req, res) => {
   const { ObjectId } = require("mongodb");
 
   try {
     const result = await db.collection("courses").deleteOne({
       _id: new ObjectId(req.params.id),
+      userId: req.userId,
     });
 
     res.json(result);
@@ -104,19 +122,26 @@ app.delete("/courses/:id", async (req, res) => {
 });
 
 // UPDATE COURSE
-app.put("/courses/:id", async (req, res) => {
+app.put("/courses/:id", auth, async (req, res) => {
   const { ObjectId } = require("mongodb");
 
   try {
     const updatedCourse = req.body;
 
-    const result = await db
-      .collection("courses")
-      .updateOne({ _id: new ObjectId(req.params.id) }, { $set: updatedCourse });
+    const result = await db.collection("courses").updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+        userId: req.userId,
+      },
+      {
+        $set: updatedCourse,
+      },
+    );
 
     res.json(result);
   } catch (error) {
     console.log(error);
+
     res.status(500).json({
       message: "Error updating course",
     });
@@ -142,17 +167,19 @@ app.get("/studySchedule", auth, async (req, res) => {
 });
 
 // DELETE STUDY SCHEDULE
-app.delete("/studySchedule/:id", async (req, res) => {
+app.delete("/studySchedule/:id", auth, async (req, res) => {
   const { ObjectId } = require("mongodb");
 
   try {
     const result = await db.collection("studySchedule").deleteOne({
       _id: new ObjectId(req.params.id),
+      userId: req.userId,
     });
 
     res.json(result);
   } catch (error) {
     console.log(error);
+
     res.status(500).json({
       message: "Error deleting session",
     });
@@ -160,7 +187,7 @@ app.delete("/studySchedule/:id", async (req, res) => {
 });
 
 // UPDATE STUDY SESSION STATUS
-app.put("/studySchedule/:id/status", async (req, res) => {
+app.put("/studySchedule/:id/status", auth, async (req, res) => {
   const { ObjectId } = require("mongodb");
 
   try {
@@ -168,22 +195,28 @@ app.put("/studySchedule/:id/status", async (req, res) => {
 
     const session = await db.collection("studySchedule").findOne({
       _id: new ObjectId(req.params.id),
+      userId: req.userId,
     });
 
     if (!session) {
       return res.status(404).json({ message: "Session not found" });
     }
 
-    await db
-      .collection("studySchedule")
-      .updateOne(
-        { _id: new ObjectId(req.params.id) },
-        { $set: { status: status } },
-      );
+    await db.collection("studySchedule").updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+        userId: req.userId,
+      },
+      {
+        $set: { status: status },
+      },
+    );
 
     if (status === "missed") {
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
       const currentIndex = days.indexOf(session.day);
+
       const newDay = days[(currentIndex + 2) % 7];
 
       const newSession = {
@@ -202,7 +235,10 @@ app.put("/studySchedule/:id/status", async (req, res) => {
     res.json({ message: "Session updated successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error updating session status" });
+
+    res.status(500).json({
+      message: "Error updating session status",
+    });
   }
 });
 

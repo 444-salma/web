@@ -10,7 +10,11 @@ const courseTableBody = document.querySelector("tbody");
 
 async function loadCourses() {
   try {
-    const response = await fetch("https://web-2-ftdn.onrender.com/courses");
+    const response = await fetch("https://web-2-ftdn.onrender.com/courses", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
     courses = await response.json();
 
@@ -46,6 +50,7 @@ form.addEventListener("submit", async function (event) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify(course),
         },
@@ -67,6 +72,7 @@ form.addEventListener("submit", async function (event) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(course),
       });
@@ -140,9 +146,12 @@ courseTableBody.addEventListener("click", async function (event) {
     const courseId = courses[index]._id;
 
     try {
-      await fetch(`https://web-2-ftdn.onrender.com/courses/${courseId}`, {
-        method: "DELETE",
-      });
+      await fetch(`https://web-2-ftdn.onrender.com/courses/${courseId}`,{
+  method: "DELETE",
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}
 
       courses.splice(index, 1);
 

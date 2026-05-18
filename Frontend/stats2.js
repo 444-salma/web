@@ -1,10 +1,26 @@
 let allSessions = [];
 
 async function loadStatistics() {
+  const token = localStorage.getItem("token");
+
   const [coursesRes, tasksRes, sessionsRes] = await Promise.all([
-    fetch("https://web-2-ftdn.onrender.com/courses"),
-    fetch("https://web-2-ftdn.onrender.com/tasks"),
-    fetch("https://web-2-ftdn.onrender.com/studySchedule"),
+    fetch("https://web-2-ftdn.onrender.com/courses", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+
+    fetch("https://web-2-ftdn.onrender.com/tasks", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+
+    fetch("https://web-2-ftdn.onrender.com/studySchedule", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
   ]);
 
   const courses = await coursesRes.json();
@@ -98,6 +114,7 @@ async function markSession(sessionId, status) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ status }),
       },

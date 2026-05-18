@@ -76,17 +76,17 @@
           <div class="stats-grid">
             <div class="stats-card">
               <h3>Total Courses</h3>
-              <p>4</p>
+              <p>0</p>
             </div>
 
             <div class="stats-card">
               <h3>Today’s Sessions</h3>
-              <p id="sessionsCount">3</p>
+              <p id="sessionsCount">0</p>
             </div>
 
             <div class="stats-card">
               <h3>Upcoming Deadline</h3>
-              <p>Physics Quiz</p>
+              <p>No deadlines</p>
             </div>
 
             <div class="stats-card">
@@ -129,7 +129,14 @@
           document.getElementById("remindersContainer");
 
         try {
-          const response = await fetch("https://web-2-ftdn.onrender.com/tasks");
+          const response = await fetch(
+            "https://web-2-ftdn.onrender.com/tasks",
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            },
+          );
           let tasks = await response.json();
 
           const today = new Date();
@@ -215,11 +222,21 @@
 
       async function loadDashboardData() {
         try {
-          const [coursesRes, sessionsRes] = await Promise.all([
-            fetch("https://web-2-ftdn.onrender.com/courses"),
-            fetch("https://web-2-ftdn.onrender.com/studySchedule"),
-          ]);
+          const token = localStorage.getItem("token");
 
+          const [coursesRes, sessionsRes] = await Promise.all([
+            fetch("https://web-2-ftdn.onrender.com/courses", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+
+            fetch("https://web-2-ftdn.onrender.com/studySchedule", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+          ]);
           const courses = await coursesRes.json();
           const sessions = await sessionsRes.json();
 
@@ -260,27 +277,27 @@
           div.className = "session-box";
 
           div.innerHTML = `
-      <div class="session-info">
-        <strong>${session.course || "No course"}</strong>
-        <p>
-          ${session.day || ""}
-          |
-          ${session.startTime || ""} - ${session.endTime || ""}
-        </p>
-      </div>
+                  <div class="session-info">
+                    <strong>${session.course || "No course"}</strong>
+                    <p>
+                      ${session.day || ""}
+                      |
+                      ${session.startTime || ""} - ${session.endTime || ""}
+                    </p>
+                  </div>
 
-      <div class="session-actions">
-        <button class="session-btn"
-          onclick="updateSessionStatus('${session._id}', 'completed')">
-          Completed
-        </button>
+                  <div class="session-actions">
+                    <button class="session-btn"
+                      onclick="updateSessionStatus('${session._id}', 'completed')">
+                      Completed
+                    </button>
 
-        <button class="missed-btn"
-          onclick="updateSessionStatus('${session._id}', 'missed')">
-          Missed
-        </button>
-      </div>
-    `;
+                    <button class="missed-btn"
+                      onclick="updateSessionStatus('${session._id}', 'missed')">
+                      Missed
+                    </button>
+                  </div>
+                `;
 
           container.appendChild(div);
         });
@@ -288,12 +305,15 @@
 
       async function updateSessionStatus(sessionId, status) {
         try {
+          const token = localStorage.getItem("token");
+
           await fetch(
             `https://web-2-ftdn.onrender.com/studySchedule/${sessionId}/status`,
             {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ status }),
             },

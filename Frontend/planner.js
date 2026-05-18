@@ -184,9 +184,16 @@ sessionForm.onsubmit = async function (e) {
 
   if (id) {
     // سنربط التعديل مع MongoDB لاحقًا
-    sessions = sessions.map((s) =>
-      s._id === id ? { ...sessionData, _id: id } : s,
-    );
+    await fetch(`https://web-2-ftdn.onrender.com/studySchedule/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(sessionData),
+    });
+
+    await loadSessions();
   } else {
     const response = await fetch(
       "https://web-2-ftdn.onrender.com/studySchedule",

@@ -10,7 +10,11 @@ async function loadCoursesIntoSelect() {
   courseSelect.innerHTML = "";
 
   try {
-    const response = await fetch("https://web-2-ftdn.onrender.com/courses");
+    const response = await fetch("https://web-2-ftdn.onrender.com/courses", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     const courses = await response.json();
 
     if (courses.length === 0) {
@@ -61,6 +65,7 @@ form.addEventListener("submit", async function (e) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(task),
     });
@@ -115,7 +120,11 @@ function displayTasks() {
 
 async function loadTasks() {
   try {
-    const response = await fetch("https://web-2-ftdn.onrender.com/tasks");
+    const response = await fetch("https://web-2-ftdn.onrender.com/tasks", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     tasks = await response.json();
     displayTasks();
   } catch (error) {
@@ -124,10 +133,27 @@ async function loadTasks() {
 }
 
 // Delete
-function deleteTask(index) {
-  tasks.splice(index, 1);
-  displayTasks();
-  showNotification("Task deleted 🗑️", "error");
+async function deleteTask(index) {
+  try {
+    const taskId = tasks[index]._id;
+
+    await fetch(`https://web-2-ftdn.onrender.com/tasks/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    tasks.splice(index, 1);
+
+    displayTasks();
+
+    showNotification("Task deleted 🗑️", "error");
+  } catch (error) {
+    console.log(error);
+
+    showNotification("Error deleting task", "error");
+  }
 }
 
 // Edit
